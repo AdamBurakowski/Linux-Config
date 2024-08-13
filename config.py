@@ -70,7 +70,18 @@ keys = [
     Key([mod], "f", lazy.spawn("firefox")),
     Key([mod], "t", lazy.spawn("thunar")),
     Key([mod], "w", lazy.spawn("libreoffice")),
-    # Key([mod], "g", lazy.spawn("gimp")),
+    Key([mod], "s", lazy.spawn("steam")),
+    Key([mod], "g", lazy.spawn("gimp")),
+    
+    # Sound control
+    Key([], "XF86AudioMute", lazy.spawn("amixer -q set Master toggle")),
+    Key([], "XF86AudioLowerVolume", lazy.spawn("amixer -c 0 sset Master 1- unmute")),
+    Key([], "XF86AudioRaiseVolume", lazy.spawn("amixer -c 0 sset Master 1+ unmute")),
+    
+    # Flameshot keybinds
+    Key([mod, "shift"], "s", lazy.spawn("flameshot gui")),
+    Key([], "Print", lazy.spawn("flameshot full -c")),
+    
     # Toggle between different layouts as defined below
     Key([mod], "Tab", lazy.next_layout(), desc="Toggle between layouts"),
     Key([mod], "q", lazy.window.kill(), desc="Kill focused window"),
@@ -133,8 +144,10 @@ screens = [
     Screen(
         top=bar.Bar(
             [
-                widget.Sep(padding=10),
-                widget.GroupBox(),
+                widget.Sep(linewidth = 0, padding=15),
+                widget.GroupBox(highlight_method="block",
+                                padding_x=10,
+                                padding_y=4),
                 widget.Prompt(),
                 widget.WindowName(),
                 widget.Chord(
@@ -146,8 +159,16 @@ screens = [
                 # NB Systray is incompatible with Wayland, consider using StatusNotifier instead
                 # widget.StatusNotifier(),
                 widget.CurrentLayout(),
-                widget.Clock(format="%a %H:%M %d-%m-%Y"),
-                widget.Sep(padding=10),
+                widget.Sep(linewidth = 0, padding=10),
+                widget.Battery(not_charging_char="",
+                               charge_char="⚡",
+                               full_char="",
+                               format="[ {char} {percent:2.0%} ]"),
+                widget.Sep(linewidth = 0, padding=10),
+                widget.Volume(emoji=True),
+                widget.Sep(linewidth = 0, padding=10),
+                widget.Clock(format="%a,  %H:%M  |  %d-%m-%Y"),
+                widget.Sep(linewidth = 0, padding=15),
             ],
             24,
             # border_width=[2, 0, 2, 0],  # Draw top and bottom borders
@@ -203,5 +224,4 @@ wmname = "LG3D"
 
 @hook.subscribe.startup_once
 def autostart():
-    subprocess.run('/home/adam/.config/qtile/autostart.sh')
-
+    subprocess.run('/home/adamer/.config/qtile/autostart.sh')
